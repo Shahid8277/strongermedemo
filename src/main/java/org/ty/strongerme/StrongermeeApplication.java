@@ -41,16 +41,18 @@ public class StrongermeeApplication {
 	 */
 	
 	//Push Notification firebase intialization and configuration
-		@Bean("messageinsta")
-		FirebaseMessaging firebaseMessaging() throws IOException {
-			
-		    GoogleCredentials googleCredentials = GoogleCredentials
-		            .fromStream(new ClassPathResource("strongerme-20bc3-firebase-adminsdk-3fxmh-ce7c840d42.json").getInputStream());
-		    FirebaseOptions firebaseOptions = FirebaseOptions
-		            .builder()
-		            .setCredentials(googleCredentials)
-		            .build();
-		    FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "StrongerMe");
-		    return FirebaseMessaging.getInstance(app);
+		@Bean
+	FirebaseMessaging firebaseMessaging() throws IOException {
+		GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
+				new ClassPathResource("strongerme-20bc3-firebase-adminsdk-3fxmh-ce7c840d42.json").getInputStream());
+		FirebaseOptions firebaseOptions = FirebaseOptions.builder().setCredentials(googleCredentials).build();
+		List<FirebaseApp> apps = FirebaseApp.getApps();
+		for (FirebaseApp firebaseApp : apps) {
+			if (firebaseApp.getName().equalsIgnoreCase("StrongerMe")) {
+				return FirebaseMessaging.getInstance(firebaseApp);
+			}
 		}
+		FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "StrongerMe");
+		return FirebaseMessaging.getInstance(app);
+	}
 }
